@@ -1,38 +1,64 @@
-/**
- * Gets the repositories of the user from Github
- */
+import { select, takeLatest, put } from 'redux-saga/effects';
+import { push } from 'react-router-redux';
+import firebase from '../../utils/firebase';
 
-import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { LOAD_REPOS } from 'containers/App/constants';
-import { reposLoaded, repoLoadingError } from 'containers/App/actions';
+import types from './constants';
+import loginActions from './actions';
 
-import request from 'utils/request';
-import { makeSelectUsername } from 'containers/HomePage/selectors';
+const formSelector = (state) => state.get('login').toJS();
 
-/**
- * Github repos request/response handler
- */
-export function* getRepos() {
-  // Select username from store
-  const username = yield select(makeSelectUsername());
-  const requestURL = `https://api.github.com/users/${username}/repos?type=all&sort=updated`;
-
+export function* loginRequestSaga() {
   try {
-    // Call our request helper (see 'utils/request')
-    const repos = yield call(request, requestURL);
-    yield put(reposLoaded(repos, username));
-  } catch (err) {
-    yield put(repoLoadingError(err));
+    const { form } = yield select(formSelector);
+    const errors = validateInputs(form);
+    if (Object.keys(errors).length > 0) {
+      yield put(loginActions.failure(errors));
+      return;
+    }
+    let user = yield firebase
+      .auth()
+      .signInWithEmailAndPassword(form.username, form.password);
+    user = user.toJSON();
+    yield put(loginActions.success(user));
+    localStorage.setItem('user', JSON.stringify(user));
+    yield put(push('/mainPage'));
+  } catch (error) {
+    yield put(loginActions.failure({ serverError: error.message }));
   }
 }
 
-/**
- * Root saga manages watcher lifecycle
- */
+export function* userBacktologinPage() {
+  try {
+    // eslint-disable-next-line
+    let user = localStorage.getItem('user', user);
+    if (user) {
+      yield put(push('/mainPage'));
+    }
+    if (!user) {
+      yield put(push('/'));
+    }
+  } catch (error) {
+    yield put(push('/'));
+  }
+}
+
+function validateInputs({ username, password }) {
+  // eslint-disable-next-line
+  let errors = {};
+  if (!username) {
+    errors.username = 'Email is required';
+  }
+  if (!password) {
+    errors.password = 'Password is required';
+  }
+  return errors;
+}
+
 export default function* githubData() {
-  // Watches for LOAD_REPOS actions and calls getRepos when one comes in.
-  // By using `takeLatest` only the result of the latest API call is applied.
-  // It returns task descriptor (just like fork) so we can continue execution
-  // It will be cancelled automatically on component unmount
-  yield takeLatest(LOAD_REPOS, getRepos);
+  // Watches for LOAD_REPOS actions and calls getRepos when one comes in. By using
+  // `takeLatest` only the result of the latest API call is applied. It returns
+  // task descriptor (just like fork) so we can continue execution It will be
+  // cancelled automatically on component unmount
+  yield [takeLatest(types.LOGIN_REQUEST, loginRequestSaga)];
+  yield [takeLatest(types.ON_PAGE_LOADED, userBacktologinPage)];
 }

@@ -1,17 +1,19 @@
-/**
- * Homepage selectors
- */
-
 import { createSelector } from 'reselect';
 
-const selectHome = (state) => state.get('home');
+/**
+ * Direct selector to the loginContainer state domain
+ */
+export const selectloginContainerDomain = (state) => state.get('login');
 
-const makeSelectUsername = () => createSelector(
-  selectHome,
-  (homeState) => homeState.get('username')
-);
+/**
+ * Other specific selectors
+ */
 
-export {
-  selectHome,
-  makeSelectUsername,
-};
+/**
+ * Default selector used by loginContainer
+ */
+
+const makeSelectloginContainer = () =>
+  createSelector(selectloginContainerDomain, (substate) => substate.toJS());
+
+export default makeSelectloginContainer;

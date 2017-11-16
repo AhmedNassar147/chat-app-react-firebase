@@ -1,32 +1,36 @@
-/*
- * HomeReducer
- *
- * The reducer takes care of our data. Using actions, we can change our
- * application state.
- * To add a new action, add it to the switch statement in the reducer function
- *
- * Example:
- * case YOUR_ACTION_CONSTANT:
- *   return state.set('yourStateVariable', true);
- */
 import { fromJS } from 'immutable';
-
-import {
-  CHANGE_USERNAME,
-} from './constants';
+import types from './constants';
 
 // The initial state of the App
 const initialState = fromJS({
-  username: '',
+  form: {},
+  error: {
+    exist: false,
+    username: '',
+    password: '',
+  },
 });
 
 function homeReducer(state = initialState, action) {
+  const oldState = state.toJS();
   switch (action.type) {
-    case CHANGE_USERNAME:
-
-      // Delete prefixed '@' from the github username
-      return state
-        .set('username', action.name.replace(/@/gi, ''));
+    case types.LOGIN_FORM_CHANGED:
+      return state.merge({
+        form: {
+          ...oldState.form,
+          [action.inputName]: action.value,
+        },
+      });
+    case types.LOGIN_FAILURE:
+      return state.merge({
+        error: { ...action.error, exist: true },
+      });
+    case types.CLOSE_MODAL:
+      return state.merge({
+        error: {
+          exist: false,
+        },
+      });
     default:
       return state;
   }
