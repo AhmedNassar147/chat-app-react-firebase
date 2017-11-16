@@ -1,22 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import {
-  Paper,
-  TextField,
-  RaisedButton,
-  Dialog,
-  FlatButton,
-} from 'material-ui';
+import { TextField, RaisedButton, Dialog, FlatButton } from 'material-ui';
+import Container from 'components/RegisterContainer';
 import { createStructuredSelector } from 'reselect';
 import selectLoginForm from './selectors';
 import loginActions from './actions';
 import sagas from './saga';
 import injectSaga from '../../utils/injectSaga';
-
-export class HomePage extends Component {
+export class LoginPage extends React.Component {
+  // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
     this.state = {
@@ -35,60 +30,53 @@ export class HomePage extends Component {
       <FlatButton label="Ok" primary onClick={this.props.closeModal} />,
     ];
     return (
-      <div style={movepaper}>
-        <Paper style={paddingPaper}>
-          <div style={centerizeElement}>
-            <h2>LoginPage</h2>
-          </div>
-          <TextField
-            fullWidth
-            hintText="UserName"
-            name="username"
-            defaultValue={form.username}
-            onChange={this.props.onInputChange}
-          />
-          <TextField
-            fullWidth
-            hintText="Password"
-            defaultValue={form.password}
-            name="password"
-            onChange={this.props.onInputChange}
-          />
-          <RaisedButton
-            fullWidth
-            primary
-            label="Login"
-            onClick={this.props.onLogin}
-          />
-          <RaisedButton
-            fullWidth
-            secondary
-            label="Signup"
-            onClick={this.props.Signedupclicked}
-          />
-        </Paper>
-        <Dialog actions={actions} open={error.exist}>
+      <Container title="Login">
+        <TextField
+          fullWidth
+          hintText="Email"
+          name="username"
+          errorText={error.username}
+          defaultValue={form.username}
+          onChange={this.props.onInputChange}
+        />
+        <TextField
+          fullWidth
+          type="password"
+          hintText="Password"
+          defaultValue={form.password}
+          name="password"
+          errorText={error.password}
+          onChange={this.props.onInputChange}
+        />
+        <RaisedButton
+          style={{ marginBottom: 8 }}
+          fullWidth
+          primary
+          label="Login"
+          onClick={this.props.onLogin}
+        />
+        <br />
+        <RaisedButton
+          fullWidth
+          secondary
+          label="Signup"
+          onClick={this.props.Signedupclicked}
+        />
+        {/* using false for now to just keep the modal close to be
+          replaced with redux error handler */}
+        <Dialog actions={actions} open={false}>
           {error.username}
           <br />
           {error.password}
           <br />
           {error.serverError}
         </Dialog>
-      </div>
+      </Container>
     );
   }
 }
-const movepaper = {
-  margin: '25vh',
-};
-const centerizeElement = {
-  textAlign: 'center',
-};
-const paddingPaper = {
-  padding: 32,
-};
 
-HomePage.propTypes = {
+LoginPage.propTypes = {
   Signedupclicked: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
@@ -108,7 +96,7 @@ function mapDispatchToProps(dispatch) {
     // dispatching your action and get the input value
     onInputChange: (event, value) =>
       dispatch(
-        loginActions.loginFormChanged({ inputName: event.target.name, value }),
+        loginActions.loginFormChanged({ inputName: event.target.name, value })
       ),
     closeModal: () => dispatch(loginActions.closeModal()),
     OnLoginPageLoading: () =>
@@ -116,8 +104,8 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const ConnectedHomePage = connect(mapStateToProps, mapDispatchToProps)(
-  HomePage,
+const ConnectedLoginPage = connect(mapStateToProps, mapDispatchToProps)(
+  LoginPage
 );
-export const withSaga = injectSaga({ key: 'HomePage', saga: sagas });
-export default compose(withSaga)(ConnectedHomePage);
+export const withSaga = injectSaga({ key: 'LoginPage', saga: sagas });
+export default compose(withSaga)(ConnectedLoginPage);

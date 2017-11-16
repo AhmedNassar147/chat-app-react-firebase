@@ -12,7 +12,7 @@
 
 import { fromJS } from 'immutable';
 
-import constants from '../../containers/HomePage/constants';
+import constants from '../../containers/LoginPage/constants';
 import signUpConstants from '../../containers/SignUpContainer/constants';
 import mainConstants from '../../containers/MainPage/constants';
 

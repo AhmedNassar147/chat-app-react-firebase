@@ -4,10 +4,10 @@
 
 import { fromJS } from 'immutable';
 import { combineReducers } from 'redux-immutable';
-import { LOCATION_CHANGE } from 'react-router-redux';
-import loginReducer from './containers/HomePage/reducer';
-import globalReducer from 'containers/App/reducer';
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
+import globalReducer from 'containers/App/reducer';
+import { LOCATION_CHANGE } from 'react-router-redux';
+import loginReducer from './containers/LoginPage/reducer';
 
 /*
  * routeReducer
@@ -19,7 +19,7 @@ import languageProviderReducer from 'containers/LanguageProvider/reducer';
 
 // Initial routing state
 const routeInitialState = fromJS({
-  location: null
+  location: null,
 });
 
 /**
@@ -30,7 +30,7 @@ function routeReducer(state = routeInitialState, action) {
     /* istanbul ignore next */
     case LOCATION_CHANGE:
       return state.merge({
-        location: action.payload
+        location: action.payload,
       });
     default:
       return state;
@@ -46,6 +46,6 @@ export default function createReducer(injectedReducers) {
     global: globalReducer,
     language: languageProviderReducer,
     login: loginReducer,
-    ...injectedReducers
+    ...injectedReducers,
   });
 }

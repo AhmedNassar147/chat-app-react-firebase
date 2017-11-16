@@ -1,4 +1,4 @@
-export const CHANGE_USERNAME = 'boilerplate/Home/CHANGE_USERNAME';
+export const CHANGE_USERNAME = 'boilerplate/LoginPage/CHANGE_USERNAME';
 
 export default {
   LOGIN_FORM_CHANGED: 'LOGIN_FORM_CHANGED',

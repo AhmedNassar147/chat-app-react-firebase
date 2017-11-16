@@ -26,7 +26,7 @@ export function* SiGnOutSaga() {
     localStorage.removeItem('user');
     yield put(push('/'));
   } catch (error) {
-    console.log('user is not empty =>', error);
+    yield put(push('/mainPage'));
   }
 }
 export default function* defaultSaga() {

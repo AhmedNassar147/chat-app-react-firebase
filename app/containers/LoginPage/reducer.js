@@ -11,7 +11,7 @@ const initialState = fromJS({
   },
 });
 
-function homeReducer(state = initialState, action) {
+function LoginReducer(state = initialState, action) {
   const oldState = state.toJS();
   switch (action.type) {
     case types.LOGIN_FORM_CHANGED:
@@ -36,4 +36,4 @@ function homeReducer(state = initialState, action) {
   }
 }
 
-export default homeReducer;
+export default LoginReducer;

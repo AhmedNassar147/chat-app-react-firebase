@@ -1,4 +1,4 @@
-import types from '../HomePage/constants';
+import types from '../LoginPage/constants';
 
 export default {
   loginFormChanged: ({ inputName, value }) => ({
