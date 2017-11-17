@@ -2,7 +2,7 @@ import { takeLatest, put, select } from 'redux-saga/effects';
 import { push } from 'react-router-redux';
 import signUpTypes from './constants';
 import signupActions from './actions';
-import firebase from '../../utils/firebase';
+import firebase, { database } from '../../utils/firebase';
 
 const formSelector = (state) => state.get('signUpContainer').toJS();
 
@@ -21,6 +21,14 @@ export function* signUpRequestSaga() {
       displayName: user.firstName + user.lastName,
     });
     const updateUser = user.toJSON();
+
+    setUserDataIntoDatabase(
+      updateUser,
+      signUpForm.firstName,
+      signUpForm.lastName,
+      signUpForm.password
+    );
+
     localStorage.setItem('user', JSON.stringify(updateUser));
     yield put(signupActions.SignUpSuccess(updateUser));
     yield put(push('/mainPage'));
@@ -28,6 +36,21 @@ export function* signUpRequestSaga() {
     yield put(signupActions.SignupFailure(error));
   }
 }
+
+const setUserDataIntoDatabase = async (user, firstName, lastName, password) => {
+  try {
+    await database.ref(`/Users/${user.uid}`).set({
+      firstName,
+      lastName,
+      displayName: firstName + lastName,
+      Email: user.email,
+      password,
+    });
+    console.log('User added to database!');
+  } catch (error) {
+    console.log('Error while trying to add user to database', error);
+  }
+};
 
 export function* SignUpLoadSaga() {
   try {

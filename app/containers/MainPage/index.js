@@ -12,18 +12,16 @@ import { RaisedButton } from 'material-ui';
 import makeSelectMainPage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import mainActions from './actions';
 import { makeSelectCurrentUser } from '../App/selectors';
 import MainActions from './actions';
 export class MainPage extends React.Component {
   componentWillMount() {
     this.props.onMainPageLoaded();
   }
-
   render() {
     return (
       <div style={flexmMianPage}>
-        <div> {this.props.user && this.props.user.display} </div>
+        {/* <div> {this.props.user && this.props.user.display} </div> */}
         <div style={flexSides}>
           <LeftSide />
         </div>
@@ -52,7 +50,7 @@ const flexChatSide = {
 
 MainPage.propTypes = {
   onMainPageLoaded: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
+  // user: PropTypes.object.isRequired,
   SignOut: PropTypes.func.isRequired,
 };
 
@@ -64,7 +62,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     onMainPageLoaded: () => dispatch(MainActions.onMainPageLoaded()),
-    SignOut: () => dispatch(mainActions.SignOut()),
+    SignOut: () => dispatch(MainActions.SignOut()),
   };
 }
 

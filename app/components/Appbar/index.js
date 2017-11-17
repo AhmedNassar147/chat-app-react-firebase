@@ -6,11 +6,11 @@
 
 import React from 'react';
 import { AppBar } from 'material-ui';
+// import PropTypes from 'prop-types';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 
 class Appbar extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -18,9 +18,10 @@ class Appbar extends React.Component {
     };
   }
 
-  handleToggle = () => this.setState({
-    open: !this.state.open,
-  });
+  handleToggle = () =>
+    this.setState({
+      open: !this.state.open,
+    });
   render() {
     return (
       <div>
