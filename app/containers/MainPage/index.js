@@ -8,31 +8,49 @@ import injectReducer from 'utils/injectReducer';
 import RightSide from 'components/RightSide';
 import LeftSide from 'components/LeftSide';
 import MiddleSide from 'components/MiddleSide';
-import { RaisedButton } from 'material-ui';
-import makeSelectMainPage from './selectors';
+import makeSelectSUserStatus from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { makeSelectCurrentUser } from '../App/selectors';
 import MainActions from './actions';
+import {
+  makeSelectCurrentUser,
+  makeSelectAllUsers,
+  makeSelectGetUser,
+} from '../App/selectors';
+import Appbar from '../../components/Appbar';
+
 export class MainPage extends React.Component {
   componentWillMount() {
     this.props.onMainPageLoaded();
+    this.props.OnRetreiveUsersRequest();
   }
   render() {
+    // console.log('props', this.props.updateUserStatusInputChanged);
     return (
-      <div style={flexmMianPage}>
-        {/* <div> {this.props.user && this.props.user.display} </div> */}
-        <div style={flexSides}>
-          <LeftSide />
-        </div>
-        <div style={flexChatSide}>
-          <MiddleSide />
-        </div>
-        <div style={flexSides}>
-          <RightSide />
-        </div>
+      <div>
         <div>
-          <RaisedButton label="Sign out" primary onClick={this.props.SignOut} />
+          <Appbar
+            userName={this.props.allUsers}
+            signout={this.props.OnSignOutClicked}
+            OnInputUserInfoChanged={(event, value) =>
+              this.props.OnInputUserInfoChanged(event, value)}
+            OnUpdateUserStatus={(userId) =>
+              this.props.OnUpdateUserStatusoButtonClicked(userId)}
+          />
+        </div>
+        <div style={flexmMianPage}>
+          <div style={flexSides}>
+            <LeftSide userProfile={this.props.getUserInfo} />
+          </div>
+          <div style={flexChatSide}>
+            <MiddleSide user={this.props.getUserInfo} />
+          </div>
+          <div style={flexSides}>
+            <RightSide
+              data={this.props.allUsers}
+              startChat={(uid) => this.props.OnRequestGetUser(uid)}
+            />
+          </div>
         </div>
       </div>
     );
@@ -45,24 +63,43 @@ const flexSides = {
   flex: 1,
 };
 const flexChatSide = {
-  flex: 3,
+  flex: 2,
 };
 
 MainPage.propTypes = {
   onMainPageLoaded: PropTypes.func.isRequired,
-  // user: PropTypes.object.isRequired,
-  SignOut: PropTypes.func.isRequired,
+  OnRetreiveUsersRequest: PropTypes.func.isRequired,
+  allUsers: PropTypes.array,
+  OnSignOutClicked: PropTypes.func,
+  OnRequestGetUser: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.array,
+  OnInputUserInfoChanged: PropTypes.func,
+  OnUpdateUserStatusoButtonClicked: PropTypes.func,
+  // updateUserStatusInputChanged: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
-  mainpage: makeSelectMainPage(),
   user: makeSelectCurrentUser(),
+  allUsers: makeSelectAllUsers(),
+  getUserInfo: makeSelectGetUser(),
+  updateUserStatusInputChanged: makeSelectSUserStatus(),
 });
 
 function mapDispatchToProps(dispatch) {
   return {
     onMainPageLoaded: () => dispatch(MainActions.onMainPageLoaded()),
-    SignOut: () => dispatch(MainActions.SignOut()),
+    OnRetreiveUsersRequest: () => dispatch(MainActions.RquestRetreiveUsers()),
+    OnSignOutClicked: () => dispatch(MainActions.SignOutRequest()),
+    OnRequestGetUser: (uid) => dispatch(MainActions.RequestGetUser(uid)),
+    OnInputUserInfoChanged: (event, value) =>
+      dispatch(
+        MainActions.OnUpdateUserInfoChanged({
+          inputName: event.target.name,
+          inputValue: value,
+        })
+      ),
+    OnUpdateUserStatusoButtonClicked: (userId) =>
+      dispatch(MainActions.RequestUpdateUserStatus(userId)),
   };
 }
 

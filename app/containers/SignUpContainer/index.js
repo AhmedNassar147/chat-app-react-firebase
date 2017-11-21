@@ -55,6 +55,7 @@ export class SignUpContainer extends React.Component {
           fullWidth
           hintText="Password"
           name="password"
+          type="password"
           errorText={passwordError}
           onChange={this.props.OninputChanged}
         />

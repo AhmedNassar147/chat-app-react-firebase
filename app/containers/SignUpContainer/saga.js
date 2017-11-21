@@ -8,6 +8,7 @@ const formSelector = (state) => state.get('signUpContainer').toJS();
 
 export function* signUpRequestSaga() {
   try {
+    const userStatus = '';
     const { signUpForm } = yield select(formSelector);
     const errors = validateUserInputs(signUpForm);
     if (Object.keys(errors).length > 0) {
@@ -26,7 +27,8 @@ export function* signUpRequestSaga() {
       updateUser,
       signUpForm.firstName,
       signUpForm.lastName,
-      signUpForm.password
+      signUpForm.password,
+      userStatus
     );
 
     localStorage.setItem('user', JSON.stringify(updateUser));
@@ -37,18 +39,25 @@ export function* signUpRequestSaga() {
   }
 }
 
-const setUserDataIntoDatabase = async (user, firstName, lastName, password) => {
+const setUserDataIntoDatabase = async (
+  user,
+  firstName,
+  lastName,
+  password,
+  userStatus
+) => {
   try {
     await database.ref(`/Users/${user.uid}`).set({
       firstName,
       lastName,
-      displayName: firstName + lastName,
+      displayName: `${firstName} ${lastName}`,
       Email: user.email,
+      userStatus,
       password,
+      id: user.uid,
     });
-    console.log('User added to database!');
   } catch (error) {
-    console.log('Error while trying to add user to database', error);
+    // console.log("Error while trying to add user to database", error);
   }
 };
 

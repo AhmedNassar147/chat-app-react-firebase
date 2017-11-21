@@ -1,34 +1,38 @@
-/**
-*
-* LeftSide
-*
-*/
-
 import React from 'react';
-import Avatar from 'material-ui/Avatar';
+import PropTypes from 'prop-types';
 import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider';
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 
+// eslint-disable-next-line
 class LeftSide extends React.Component {
   render() {
+    // if (!this.props.userProfile || this.props.userProfile.length > 0) { return <div />; }
     return (
       <div>
+        <Subheader>
+          <h3>Profile</h3>
+        </Subheader>
         <List>
-          <Subheader>Friends</Subheader>
           <ListItem
-            primaryText="Brendan Lim"
-            leftAvatar={<Avatar src="images/ok-128.jpg" />}
-            rightIcon={<CommunicationChatBubble />}
+            primaryText="Name"
+            secondaryText={this.props.userProfile.displayName}
           />
-          <Divider />
+          <ListItem
+            primaryText="Email"
+            secondaryText={this.props.userProfile.Email}
+          />
+          <ListItem
+            primaryText="AboutMe"
+            secondaryText={this.props.userProfile.userStatus}
+          />
         </List>
       </div>
     );
   }
 }
 
-LeftSide.propTypes = {};
+LeftSide.propTypes = {
+  userProfile: PropTypes.array,
+};
 
 export default LeftSide;

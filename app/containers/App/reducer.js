@@ -17,9 +17,16 @@ import signUpConstants from '../../containers/SignUpContainer/constants';
 import mainConstants from '../../containers/MainPage/constants';
 
 // The initial state of the App
-const initialState = fromJS({ loading: false, error: false, userData: {} });
+const initialState = fromJS({
+  loading: false,
+  error: false,
+  userData: {},
+  usersFromDatabase: [],
+  getUserinfo: {},
+});
 
 function appReducer(state = initialState, action) {
+  // const oldState = state.JS();
   switch (action.type) {
     case constants.LOGIN_SUCCESS:
     case signUpConstants.SIGNUP_SUCCESS:
@@ -27,6 +34,14 @@ function appReducer(state = initialState, action) {
       return state.merge({ userData: action.user });
     case mainConstants.LOADING_PAGE_FAILURE:
       return state.merge({ error: action.error });
+    case mainConstants.USERS_RECEIVED:
+      return state.merge({
+        usersFromDatabase: action.usersFromDataBase,
+      });
+    case mainConstants.USER_RECEIVED:
+      return state.merge({
+        getUserinfo: action.user,
+      });
     default:
       return state;
   }

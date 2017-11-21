@@ -5,13 +5,8 @@ import { createSelector } from 'reselect';
  */
 const selectMainPageDomain = (state) => state.get('mainPage');
 
-
-const makeSelectMainPage = () => createSelector(
-  selectMainPageDomain,
-  (substate) => substate.toJS()
-);
-
-export default makeSelectMainPage;
-export {
-  selectMainPageDomain,
-};
+export const makeSelectSUserStatus = () =>
+  createSelector(selectMainPageDomain, (substate) =>
+    substate.get('updateUserStatusInputChanged').toJS()
+  );
+export default makeSelectSUserStatus;
