@@ -1,6 +1,6 @@
 import { select, takeLatest, put } from 'redux-saga/effects';
 import { push } from 'react-router-redux';
-import firebase from '../../utils/firebase';
+import firebase, { database } from '../../utils/firebase';
 
 import types from './constants';
 import loginActions from './actions';
@@ -19,8 +19,11 @@ export function* loginRequestSaga() {
       .auth()
       .signInWithEmailAndPassword(form.username, form.password);
     user = user.toJSON();
-    yield put(loginActions.success(user));
-    localStorage.setItem('user', JSON.stringify(user));
+    const snapshot = yield database.ref(`/Users/${user.uid}`).once('value');
+    const userData = snapshot.val();
+    localStorage.setItem('user', JSON.stringify(userData));
+    yield put(loginActions.success(userData));
+
     yield put(push('/mainPage'));
   } catch (error) {
     yield put(loginActions.failure({ serverError: error.message }));
@@ -29,8 +32,7 @@ export function* loginRequestSaga() {
 
 export function* userBacktologinPage() {
   try {
-    // eslint-disable-next-line
-    let user = localStorage.getItem('user', user);
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       yield put(push('/mainPage'));
     }
@@ -55,10 +57,6 @@ function validateInputs({ username, password }) {
 }
 
 export default function* githubData() {
-  // Watches for LOAD_REPOS actions and calls getRepos when one comes in. By using
-  // `takeLatest` only the result of the latest API call is applied. It returns
-  // task descriptor (just like fork) so we can continue execution It will be
-  // cancelled automatically on component unmount
   yield [takeLatest(types.LOGIN_REQUEST, loginRequestSaga)];
   yield [takeLatest(types.ON_PAGE_LOADED, userBacktologinPage)];
 }

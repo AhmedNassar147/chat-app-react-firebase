@@ -8,7 +8,7 @@ import injectReducer from 'utils/injectReducer';
 import RightSide from 'components/RightSide';
 import LeftSide from 'components/LeftSide';
 import MiddleSide from 'components/MiddleSide';
-import makeSelectSUserStatus from './selectors';
+import { makeSelectUserStatus } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import MainActions from './actions';
@@ -25,31 +25,39 @@ export class MainPage extends React.Component {
     this.props.OnRetreiveUsersRequest();
   }
   render() {
-    // console.log('props', this.props.updateUserStatusInputChanged);
+    const {
+      allUsers,
+      OnSignOutClicked,
+      OnInputUserInfoChanged,
+      OnUpdateUserStatusoButtonClicked,
+      getUserInfo,
+      OnMessageInputChange,
+      OnRequestGetUser,
+      onRequestSendMessage,
+    } = this.props;
     return (
       <div>
         <div>
           <Appbar
-            userName={this.props.allUsers}
-            signout={this.props.OnSignOutClicked}
-            OnInputUserInfoChanged={(event, value) =>
-              this.props.OnInputUserInfoChanged(event, value)}
-            OnUpdateUserStatus={(userId) =>
-              this.props.OnUpdateUserStatusoButtonClicked(userId)}
+            userName={allUsers}
+            signout={OnSignOutClicked}
+            OnInputUserInfoChanged={OnInputUserInfoChanged}
+            OnUpdateUserStatus={OnUpdateUserStatusoButtonClicked}
           />
         </div>
         <div style={flexmMianPage}>
           <div style={flexSides}>
-            <LeftSide userProfile={this.props.getUserInfo} />
+            <LeftSide userProfile={getUserInfo} />
           </div>
           <div style={flexChatSide}>
-            <MiddleSide user={this.props.getUserInfo} />
+            <MiddleSide
+              userInfo={getUserInfo}
+              messageInputChange={OnMessageInputChange}
+              sendMessageRequest={onRequestSendMessage}
+            />
           </div>
           <div style={flexSides}>
-            <RightSide
-              data={this.props.allUsers}
-              startChat={(uid) => this.props.OnRequestGetUser(uid)}
-            />
+            <RightSide data={allUsers} startChat={OnRequestGetUser} />
           </div>
         </div>
       </div>
@@ -61,6 +69,7 @@ const flexmMianPage = {
 };
 const flexSides = {
   flex: 1,
+  height: '100%',
 };
 const flexChatSide = {
   flex: 2,
@@ -72,17 +81,18 @@ MainPage.propTypes = {
   allUsers: PropTypes.array,
   OnSignOutClicked: PropTypes.func,
   OnRequestGetUser: PropTypes.func.isRequired,
-  getUserInfo: PropTypes.array,
+  getUserInfo: PropTypes.object,
   OnInputUserInfoChanged: PropTypes.func,
   OnUpdateUserStatusoButtonClicked: PropTypes.func,
-  // updateUserStatusInputChanged: PropTypes.object,
+  OnMessageInputChange: PropTypes.func,
+  onRequestSendMessage: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
   user: makeSelectCurrentUser(),
   allUsers: makeSelectAllUsers(),
   getUserInfo: makeSelectGetUser(),
-  updateUserStatusInputChanged: makeSelectSUserStatus(),
+  updateUserStatusInputChanged: makeSelectUserStatus(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -90,7 +100,7 @@ function mapDispatchToProps(dispatch) {
     onMainPageLoaded: () => dispatch(MainActions.onMainPageLoaded()),
     OnRetreiveUsersRequest: () => dispatch(MainActions.RquestRetreiveUsers()),
     OnSignOutClicked: () => dispatch(MainActions.SignOutRequest()),
-    OnRequestGetUser: (uid) => dispatch(MainActions.RequestGetUser(uid)),
+    OnRequestGetUser: (id) => dispatch(MainActions.RequestGetUser(id)),
     OnInputUserInfoChanged: (event, value) =>
       dispatch(
         MainActions.OnUpdateUserInfoChanged({
@@ -100,6 +110,15 @@ function mapDispatchToProps(dispatch) {
       ),
     OnUpdateUserStatusoButtonClicked: (userId) =>
       dispatch(MainActions.RequestUpdateUserStatus(userId)),
+    OnMessageInputChange: (event, value) =>
+      dispatch(
+        MainActions.messageInputChaneged({
+          inputName: event.target.name,
+          inputValue: value,
+        })
+      ),
+    onRequestSendMessage: (userInfoId) =>
+      dispatch(MainActions.requestSendMesage(userInfoId)),
   };
 }
 

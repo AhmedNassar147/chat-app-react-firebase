@@ -1,15 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import { Switch, Route } from "react-router-dom";
-import LoginPage from "containers/LoginPage";
-import FeaturePage from "containers/FeaturePage/Loadable";
-import NotFoundPage from "containers/NotFoundPage/Loadable";
-import SignUp from "containers/SignUpContainer";
-import MainPage from "containers/MainPage";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import Appbar from "../../components/Appbar";
+import React from 'react';
+import styled from 'styled-components';
+import { Switch, Route } from 'react-router-dom';
+import LoginPage from 'containers/LoginPage';
+import FeaturePage from 'containers/FeaturePage/Loadable';
+import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import SignUp from 'containers/SignUpContainer';
+import MainPage from 'containers/MainPage';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 // eslint-disable-next-line
-import firebase from "../../utils/firebase";
+import firebase from '../../utils/firebase';
 
 const AppWrapper = styled.div`
   max-width: 100vw;
@@ -18,7 +17,7 @@ const AppWrapper = styled.div`
   min-height: 100%;
   flex-direction: column;
   background-color: #e0e0e0;
-  height: 100vh;
+  height: 100%;
 `;
 export default function App() {
   return (

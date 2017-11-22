@@ -7,24 +7,16 @@ import Subheader from 'material-ui/Subheader';
 class LeftSide extends React.Component {
   render() {
     // if (!this.props.userProfile || this.props.userProfile.length > 0) { return <div />; }
+    const { displayName, email, userStatus } = this.props.userProfile;
     return (
       <div>
         <Subheader>
           <h3>Profile</h3>
         </Subheader>
         <List>
-          <ListItem
-            primaryText="Name"
-            secondaryText={this.props.userProfile.displayName}
-          />
-          <ListItem
-            primaryText="Email"
-            secondaryText={this.props.userProfile.Email}
-          />
-          <ListItem
-            primaryText="AboutMe"
-            secondaryText={this.props.userProfile.userStatus}
-          />
+          <ListItem primaryText="Name" secondaryText={displayName} />
+          <ListItem primaryText="Email" secondaryText={email} />
+          <ListItem primaryText="AboutMe" secondaryText={userStatus} />
         </List>
       </div>
     );
@@ -32,7 +24,7 @@ class LeftSide extends React.Component {
 }
 
 LeftSide.propTypes = {
-  userProfile: PropTypes.array,
+  userProfile: PropTypes.object,
 };
 
 export default LeftSide;

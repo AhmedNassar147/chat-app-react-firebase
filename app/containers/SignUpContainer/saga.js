@@ -8,13 +8,13 @@ const formSelector = (state) => state.get('signUpContainer').toJS();
 
 export function* signUpRequestSaga() {
   try {
-    const userStatus = '';
     const { signUpForm } = yield select(formSelector);
     const errors = validateUserInputs(signUpForm);
     if (Object.keys(errors).length > 0) {
       yield put(signupActions.SignupFailure(errors));
       return;
     }
+    const userStatus = '';
     const user = yield firebase
       .auth()
       .createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
@@ -22,42 +22,55 @@ export function* signUpRequestSaga() {
       displayName: user.firstName + user.lastName,
     });
     const updateUser = user.toJSON();
-
-    setUserDataIntoDatabase(
-      updateUser,
-      signUpForm.firstName,
-      signUpForm.lastName,
-      signUpForm.password,
-      userStatus
-    );
-
-    localStorage.setItem('user', JSON.stringify(updateUser));
-    yield put(signupActions.SignUpSuccess(updateUser));
+    const displayName = `${signUpForm.firstName} ${signUpForm.lastName}`;
+    const id = updateUser.uid;
+    // console.log('userID', id);
+    const DataForLocalStorge = {
+      ...signUpForm,
+      displayName,
+      userStatus,
+      id,
+    };
+    // console.log('DataForLocalStorge', DataForLocalStorge);
+    const strigfiedData = JSON.stringify(DataForLocalStorge);
+    // console.log('DataForLocalStorge2', strigfiedData);
+    localStorage.setItem('user', strigfiedData);
+    setUserDataIntoDatabase({
+      ...updateUser,
+      ...signUpForm,
+      userStatus,
+    });
+    yield put(signupActions.SignUpSuccess(DataForLocalStorge));
     yield put(push('/mainPage'));
   } catch (error) {
+    // console.log('Error while trying to add user to database', error);
     yield put(signupActions.SignupFailure(error));
   }
 }
 
-const setUserDataIntoDatabase = async (
-  user,
+const setUserDataIntoDatabase = async ({
   firstName,
   lastName,
   password,
-  userStatus
-) => {
+  userStatus,
+  email,
+  uid,
+}) => {
   try {
-    await database.ref(`/Users/${user.uid}`).set({
+    const userData = {
       firstName,
       lastName,
       displayName: `${firstName} ${lastName}`,
-      Email: user.email,
+      email,
       userStatus,
       password,
-      id: user.uid,
-    });
+      id: uid,
+    };
+    // console.log('update user => ', userData);
+    await database.ref(`/Users/${uid}`).set(userData);
+    return userData;
   } catch (error) {
-    // console.log("Error while trying to add user to database", error);
+    return false;
   }
 };
 

@@ -18,6 +18,7 @@ export class SignUpContainer extends React.Component {
     this.props.OnSignUploading();
   }
   render() {
+    // console.log('form', this.state.form);
     const {
       firstName: firstNameError,
       lastName: lastNameError,

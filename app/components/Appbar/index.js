@@ -10,8 +10,11 @@ import {
   Dialog,
   FlatButton,
   TextField,
-  blue200,
 } from 'material-ui';
+import { blue200 } from 'material-ui/styles/colors';
+
+const userProfileUrl =
+  'https://s-media-cache-ak0.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png';
 
 class Appbar extends React.Component {
   constructor(props) {
@@ -21,39 +24,37 @@ class Appbar extends React.Component {
       dialog: false,
     };
   }
+  onSubmiClick = () => this.props.OnUpdateUserStatus();
+
   // for drawer
   handleToggle = () =>
     this.setState({
       open: !this.state.open,
     });
   // for dialog
+
   handleOpen = () => {
     this.setState({ dialog: true });
   };
   // for dialog
+
   handleClose = () => {
     this.setState({ dialog: false });
   };
+
   render() {
     // eslint-disable-next-line
     const { userName, signout } = this.props;
-    const getUserFromlocalStorage = JSON.parse(localStorage.getItem('user'));
-    const getUserEmail = getUserFromlocalStorage.email;
-    let userDisplayName = ' ';
-    const EmailAddress = 'Email:';
-    const users = userName.map((user) => user);
-    // eslint-disable-next-line
-    for (let user = 0; user < users.length; user++) {
-      const element = users[user];
-      if (element.Email === getUserEmail) userDisplayName = element.displayName;
-    }
-    const userId = getUserFromlocalStorage.uid;
+    const curentuser = JSON.parse(localStorage.getItem('user'));
     const actions = [
       <FlatButton label="Cancel" primary onClick={this.handleClose} />,
       <RaisedButton
         label="Submit"
         primary
-        onClick={() => this.props.OnUpdateUserStatus(userId)}
+        onClick={() => {
+          this.props.OnUpdateUserStatus(curentuser.id);
+          this.setState(({ dialog }) => ({ dialog: !dialog }));
+        }}
       />,
     ];
     return (
@@ -67,12 +68,10 @@ class Appbar extends React.Component {
           <div style={{ height: '15vh', backgroundColor: blue200 }}>
             <List style={{ paddingTop: '30px' }}>
               <ListItem
-                leftAvatar={
-                  <Avatar src="https://s-media-cache-ak0.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png" />
-                }
-                primaryText={userDisplayName}
+                leftAvatar={<Avatar src={userProfileUrl} />}
+                primaryText={curentuser.displayName}
               />
-              <ListItem primaryText={EmailAddress + getUserEmail} />
+              <ListItem primaryText={`Email: ${curentuser.email}`} />
             </List>
           </div>
           <RaisedButton
@@ -101,7 +100,8 @@ class Appbar extends React.Component {
               hintText="type info"
               name="aboutUser"
               onChange={(event, value) =>
-                this.props.OnInputUserInfoChanged(event, value)}
+                this.props.OnInputUserInfoChanged(event, value)
+              }
             />
           </Dialog>
         </div>

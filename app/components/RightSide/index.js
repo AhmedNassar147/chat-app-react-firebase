@@ -6,31 +6,38 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 
+const userProfileUrl =
+  'https://s-media-cache-ak0.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png';
+const UserComponent = ({ user, startChat }) => (
+  <div key={user.id}>
+    <ListItem
+      primaryText={user.displayName}
+      leftAvatar={<Avatar src={userProfileUrl} />}
+      rightIcon={<CommunicationChatBubble />}
+      onClick={() => startChat(user.id)}
+    />
+    <Divider />
+  </div>
+);
+UserComponent.propTypes = {
+  user: PropTypes.object.isRequired,
+};
+
 // eslint-disable-next-line
 class RightSide extends React.Component {
   getEveryuser = () => (
     <div>
       {this.props.data &&
         this.props.data.map((user) => (
-          <div>
-            <ListItem
-              primaryText={user.displayName}
-              key={JSON.stringify(user.id)}
-              leftAvatar={
-                <Avatar
-                  src={
-                    'https://s-media-cache-ak0.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png'
-                  }
-                />
-              }
-              rightIcon={<CommunicationChatBubble />}
-              onClick={() => this.props.startChat(user.id)}
-            />
-            <Divider />
-          </div>
+          <UserComponent
+            key={user.id}
+            user={user}
+            startChat={this.props.startChat}
+          />
         ))}
     </div>
   );
+
   render() {
     const { data } = this.props;
     if (!data || data.length < 1) {

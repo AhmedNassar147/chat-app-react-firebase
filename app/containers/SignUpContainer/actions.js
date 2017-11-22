@@ -11,7 +11,7 @@ export default {
     type: Constats.SIGNUP_REQUEST,
   }),
 
-  SignUpSuccess: ({ user }) => ({
+  SignUpSuccess: (user) => ({
     type: Constats.SIGNUP_SUCCESS,
     user,
   }),

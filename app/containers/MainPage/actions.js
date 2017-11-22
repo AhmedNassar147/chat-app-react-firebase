@@ -53,4 +53,14 @@ export default {
     type: Constants.USER_STATUS_DIDNOT_UPDATED,
     error,
   }),
+  messageInputChaneged: ({ inputName, inputValue }) => ({
+    type: Constants.INPUT_MESSAGE_CHANGED,
+    inputName,
+    inputValue,
+  }),
+  requestSendMesage: (userInfoId, msg) => ({
+    type: Constants.REQUEST_SEND_MESSAGE,
+    userInfoId,
+    msg,
+  }),
 };

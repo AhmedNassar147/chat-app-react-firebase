@@ -1,0 +1,18 @@
+1, 2
+{
+  "Chats": {
+    "usrId1-usrId2": {
+      "messages":{
+        messageId:{
+            userId:"1",
+            message: "sasa5s415as"
+        },
+        messageId:{
+            userId:"2",
+            message: "sasa5s415as"
+        },
+
+      }
+    }
+  }
+}

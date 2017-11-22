@@ -5,6 +5,7 @@ const initialState = fromJS({
   updateUserStatusInputChanged: {},
   userStatusUpdated: {},
   userStatusCannotUpdate: {},
+  messageinputvalueChanged: {},
 });
 
 function mainPageReducer(state = initialState, action) {
@@ -25,6 +26,13 @@ function mainPageReducer(state = initialState, action) {
       return state.merge({
         userStatusCannotUpdate: action.error,
       });
+    case mainConstants.INPUT_MESSAGE_CHANGED:
+      return state.merge({
+        messageinputvalueChanged: {
+          [action.inputName]: action.inputValue,
+        },
+      });
+
     default:
       return state;
   }

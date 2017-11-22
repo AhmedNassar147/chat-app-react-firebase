@@ -91,9 +91,8 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     dispatch,
-    Signedupclicked: () => dispatch(push('/signup')), // when u navigate to another page
-    onLogin: () => dispatch(loginActions.request()), // when you click login button and fire action request with saga
-    // dispatching your action and get the input value
+    Signedupclicked: () => dispatch(push('/signup')),
+    onLogin: () => dispatch(loginActions.request()),
     onInputChange: (event, value) =>
       dispatch(
         loginActions.loginFormChanged({ inputName: event.target.name, value })
