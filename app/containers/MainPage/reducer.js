@@ -6,6 +6,7 @@ const initialState = fromJS({
   userStatusUpdated: {},
   userStatusCannotUpdate: {},
   messageinputvalueChanged: {},
+  chatId: {},
 });
 
 function mainPageReducer(state = initialState, action) {
@@ -32,7 +33,10 @@ function mainPageReducer(state = initialState, action) {
           [action.inputName]: action.inputValue,
         },
       });
-
+    case mainConstants.STORE_CHAT_ID:
+      return state.merge({
+        chatId: action.chatId,
+      });
     default:
       return state;
   }

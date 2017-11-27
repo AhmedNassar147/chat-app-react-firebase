@@ -58,9 +58,27 @@ export default {
     inputName,
     inputValue,
   }),
-  requestSendMesage: (userInfoId, msg) => ({
+  requestSendMesage: (selectedUserId, msg) => ({
     type: Constants.REQUEST_SEND_MESSAGE,
-    userInfoId,
+    selectedUserId,
     msg,
+  }),
+  storeChatId: (chatId) => ({
+    type: Constants.STORE_CHAT_ID,
+    chatId,
+  }),
+  requestRetreiveMessages: (currentUserId, selectedUserId) => ({
+    type: Constants.REQUEST_RETREIVE_MESSAGES,
+    currentUserId,
+    selectedUserId,
+  }),
+
+  messageRetreivedSuccuss: (messages) => ({
+    type: Constants.MESSAGE_RETREIVED_SUCCESS,
+    messages,
+  }),
+  messageRetreivedFailure: (error) => ({
+    type: Constants.MESSAGE_RETREIVED_FAILURE,
+    error,
   }),
 };

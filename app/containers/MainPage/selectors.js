@@ -14,5 +14,11 @@ export const makeSelectMessageInput = () =>
   createSelector(selectMainPageDomain, (substate) =>
     substate.get('messageinputvalueChanged')
   );
+export const makeSelectChatId = () =>
+  createSelector(selectMainPageDomain, (substate) => substate.get('chatId'));
 
-export default { makeSelectUserStatus, makeSelectMessageInput };
+export default {
+  makeSelectUserStatus,
+  makeSelectMessageInput,
+  makeSelectChatId,
+};

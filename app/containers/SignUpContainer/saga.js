@@ -31,20 +31,20 @@ export function* signUpRequestSaga() {
       userStatus,
       id,
     };
-    // console.log('DataForLocalStorge', DataForLocalStorge);
+    console.log('DataForLocalStorge', DataForLocalStorge);
+    yield put(signupActions.SignUpSuccess(DataForLocalStorge));
     const strigfiedData = JSON.stringify(DataForLocalStorge);
     // console.log('DataForLocalStorge2', strigfiedData);
     localStorage.setItem('user', strigfiedData);
     setUserDataIntoDatabase({
-      ...updateUser,
+      ...updateUser, // efredly el klam da hna
       ...signUpForm,
       userStatus,
     });
-    yield put(signupActions.SignUpSuccess(DataForLocalStorge));
     yield put(push('/mainPage'));
   } catch (error) {
-    // console.log('Error while trying to add user to database', error);
-    yield put(signupActions.SignupFailure(error));
+    console.log('Error while trying to add user to database', error);
+    // yield put(signupActions.SignupFailure(error));
   }
 }
 

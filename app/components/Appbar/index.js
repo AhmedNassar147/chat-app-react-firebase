@@ -44,15 +44,14 @@ class Appbar extends React.Component {
 
   render() {
     // eslint-disable-next-line
-    const { userName, signout } = this.props;
-    const curentuser = JSON.parse(localStorage.getItem('user'));
+    const { userName, signout, currentUser } = this.props;
     const actions = [
       <FlatButton label="Cancel" primary onClick={this.handleClose} />,
       <RaisedButton
         label="Submit"
         primary
         onClick={() => {
-          this.props.OnUpdateUserStatus(curentuser.id);
+          this.props.OnUpdateUserStatus(currentUser.id);
           this.setState(({ dialog }) => ({ dialog: !dialog }));
         }}
       />,
@@ -69,9 +68,9 @@ class Appbar extends React.Component {
             <List style={{ paddingTop: '30px' }}>
               <ListItem
                 leftAvatar={<Avatar src={userProfileUrl} />}
-                primaryText={curentuser.displayName}
+                primaryText={currentUser.displayName}
               />
-              <ListItem primaryText={`Email: ${curentuser.email}`} />
+              <ListItem primaryText={`Email: ${currentUser.email}`} />
             </List>
           </div>
           <RaisedButton
@@ -115,6 +114,7 @@ Appbar.propTypes = {
   userName: PropTypes.array,
   OnUpdateUserStatus: PropTypes.func,
   OnInputUserInfoChanged: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
 };
 
 export default Appbar;

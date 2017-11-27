@@ -23,25 +23,42 @@ const initialState = fromJS({
   userData: {},
   usersFromDatabase: [],
   getUserinfo: {},
+  messageRetreivedSuccess: [],
+  messageRetreivedFailure: [],
 });
-
 function appReducer(state = initialState, action) {
   // const oldState = state.JS();
   switch (action.type) {
     case constants.LOGIN_SUCCESS:
     case signUpConstants.SIGNUP_SUCCESS:
     case mainConstants.LOADING_PAGE_SUCCESS:
-      return state.merge({ userData: action.user });
+      return state.merge({
+        userData: action.user,
+      });
+
     case mainConstants.LOADING_PAGE_FAILURE:
       return state.merge({ error: action.error });
+
     case mainConstants.USERS_RECEIVED:
       return state.merge({
         usersFromDatabase: action.usersFromDataBase,
       });
+
     case mainConstants.USER_RECEIVED:
       return state.merge({
         getUserinfo: action.user,
       });
+
+    case mainConstants.MESSAGE_RETREIVED_SUCCESS:
+      return state.merge({
+        messageRetreivedSuccess: action.messages,
+      });
+
+    case mainConstants.MESSAGE_RETREIVED_FAILURE:
+      return state.merge({
+        messageRetreivedFailure: action.error,
+      });
+
     default:
       return state;
   }

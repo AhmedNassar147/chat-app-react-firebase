@@ -17,14 +17,14 @@ export function* LoadingPageSaga() {
       yield put(push('/'));
     }
     if (user) {
-      yield put(MainActions.LoadingSuccess({ user }));
+      yield put(MainActions.LoadingSuccess({ user: JSON.parse(user) }));
     }
   } catch (error) {
     yield put(MainActions.LoadingFailure(error));
   }
 }
 // for retreive the all users to  mainPage when it load
-export function* RetreiveUserfromDatabase() {
+export function* RetreiveUsersfromDatabase() {
   try {
     const users = yield database.ref('/Users').once('value');
     const usersArray = [];
@@ -83,30 +83,59 @@ const selectMessage = (message) => message.toJS();
 // for select the current user from state
 const selectUser = (substate) => substate.js();
 // requst send message to firebase realtime database
-export function* requestSendMessage({ userInfoId }) {
+export function* requestSendMessage({ selectedUserId }) {
   const messageInput = yield select(makeSelectMessageInput(selectMessage));
   const { message } = messageInput.toJS();
-  let user = yield select(makeSelectCurrentUser(selectUser));
-  user = JSON.parse(user);
-  const chatId = getChatId(user.id, userInfoId);
+  const user = yield select(makeSelectCurrentUser(selectUser));
+  const chatId = getChatId(user.id, selectedUserId);
   database
     .ref()
     .child(`Chats/${chatId}`)
     .push({ senderId: user.id, message, date: Date.now() });
+  yield put(MainActions.storeChatId({ chatId }));
+}
+
+export function* requestRetreiveMessages(action) {
+  try {
+    const chatId = getChatId(action.currentUserId, action.selectedUserId);
+    const messages = yield database.ref(`/Chats/${chatId}`).once('value');
+    const messagesArray = [];
+    mapObject(messages.val())((message) => {
+      messagesArray.push(message);
+    });
+    yield put(MainActions.messageRetreivedSuccuss(messagesArray));
+  } catch (error) {
+    const errorMessage = {
+      error: 'there is no messages between you',
+      msgId: 1,
+    };
+    const errorMessageArray = [];
+    errorMessageArray.push(errorMessage);
+    yield put(MainActions.messageRetreivedFailure(errorMessageArray));
+  }
 }
 
 export default function* defaultSaga() {
   yield [takeLatest(MainConstants.MAIN_PAGE_LOADED, LoadingPageSaga)];
+
+  yield [
+    takeLatest(MainConstants.REQUEST_RETREIVE_USERS, RetreiveUsersfromDatabase),
+  ];
+
   yield [takeLatest(MainConstants.SIGNOUT_REQUEST, SignOutRequestSaga)];
+
   yield [takeLatest(MainConstants.REQUEST_GET_USER, RequestGetUserSaga)];
-  yield [takeLatest(MainConstants.REQUEST_SEND_MESSAGE, requestSendMessage)];
+
   yield [
     takeLatest(
       MainConstants.REQUEST_UPDATE_USER_STATUS,
       RequestUpdateUserStatusSaga
     ),
   ];
+
+  yield [takeLatest(MainConstants.REQUEST_SEND_MESSAGE, requestSendMessage)];
+
   yield [
-    takeLatest(MainConstants.REQUEST_RETREIVE_USERS, RetreiveUserfromDatabase),
+    takeLatest(MainConstants.REQUEST_RETREIVE_MESSAGES, requestRetreiveMessages),
   ];
 }

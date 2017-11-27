@@ -9,7 +9,9 @@ const selectGlobal = (state) => state.get('global');
 const selectRoute = (state) => state.get('route');
 
 const makeSelectCurrentUser = () =>
-  createSelector(selectGlobal, (globalState) => globalState.get('userData'));
+  createSelector(selectGlobal, (globalState) =>
+    globalState.get('userData').toJS()
+  );
 const makeSelectAllUsers = () =>
   createSelector(selectGlobal, (globalState) =>
     globalState.get('usersFromDatabase').toJS()
@@ -19,6 +21,17 @@ const makeSelectGetUser = () =>
   createSelector(selectGlobal, (globalState) =>
     globalState.get('getUserinfo').toJS()
   );
+
+const makeSelectAllMessages = () =>
+  createSelector(selectGlobal, (globalState) =>
+    globalState.get('messageRetreivedSuccess').toJS()
+  );
+
+const makeSelectMessageNotFound = () =>
+  createSelector(selectGlobal, (globalState) =>
+    globalState.get('messageRetreivedFailure').toJS()
+  );
+
 const makeSelectLoading = () =>
   createSelector(selectGlobal, (globalState) => globalState.get('loading'));
 
@@ -42,4 +55,6 @@ export {
   makeSelectLocation,
   makeSelectAllUsers,
   makeSelectGetUser,
+  makeSelectAllMessages,
+  makeSelectMessageNotFound,
 };

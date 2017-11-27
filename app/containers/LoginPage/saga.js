@@ -36,9 +36,6 @@ export function* userBacktologinPage() {
     if (user) {
       yield put(push('/mainPage'));
     }
-    if (!user) {
-      yield put(push('/'));
-    }
   } catch (error) {
     yield put(push('/'));
   }
