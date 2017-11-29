@@ -5,7 +5,6 @@ import MainConstants from './constants';
 import { database } from '../../utils/firebase';
 import mapObject from '../../utils/transformObjectIntoArray';
 import getChatId from '../../utils/chatIdHelper';
-import { makeSelectMessageInput } from './selectors';
 import { makeSelectCurrentUser } from '../App/selectors';
 
 // for check if there is user in localStorage to get in mainPage
@@ -71,28 +70,17 @@ export function* RequestUpdateUserStatusSaga(userId) {
 
 // async func to update the user status
 const goUpdateUserStatus = async (action, userStatus) => {
-  try {
-    database.ref(`/Users/${action.userId}/userStatus`).set(userStatus);
-  } catch (error) {
-    MainActions.userStatusDidotUpdate(error);
-  }
+  database.ref(`/Users/${action.userId}/userStatus`).set(userStatus);
 };
 
-// for select the message from state
-const selectMessage = (message) => message.toJS();
-// for select the current user from state
 const selectUser = (substate) => substate.js();
-// requst send message to firebase realtime database
-export function* requestSendMessage({ selectedUserId }) {
-  const messageInput = yield select(makeSelectMessageInput(selectMessage));
-  const { message } = messageInput.toJS();
+export function* requestSendMessage({ selectedUserId, msg }) {
   const user = yield select(makeSelectCurrentUser(selectUser));
   const chatId = getChatId(user.id, selectedUserId);
   database
     .ref()
     .child(`Chats/${chatId}`)
-    .push({ senderId: user.id, message, date: Date.now() });
-  yield put(MainActions.storeChatId({ chatId }));
+    .push({ senderId: user.id, message: msg, date: Date.now() });
 }
 
 export function* requestRetreiveMessages(action) {
@@ -105,13 +93,7 @@ export function* requestRetreiveMessages(action) {
     });
     yield put(MainActions.messageRetreivedSuccuss(messagesArray));
   } catch (error) {
-    const errorMessage = {
-      error: 'there is no messages between you',
-      msgId: 1,
-    };
-    const errorMessageArray = [];
-    errorMessageArray.push(errorMessage);
-    yield put(MainActions.messageRetreivedFailure(errorMessageArray));
+    yield put(MainActions.messageRetreivedFailure());
   }
 }
 

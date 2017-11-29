@@ -8,7 +8,7 @@ import injectReducer from 'utils/injectReducer';
 import RightSide from 'components/RightSide';
 import LeftSide from 'components/LeftSide';
 import MiddleSide from 'components/MiddleSide';
-import { makeSelectUserStatus, makeSelectChatId } from './selectors';
+import { makeSelectUserStatus } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import MainActions from './actions';
@@ -17,28 +17,42 @@ import {
   makeSelectAllUsers,
   makeSelectGetUser,
   makeSelectAllMessages,
-  makeSelectMessageNotFound,
 } from '../App/selectors';
 import Appbar from '../../components/Appbar';
-// import { database } from '../../utils/firebase';
+import { database } from '../../utils/firebase';
 
 export class MainPage extends React.Component {
   componentWillMount() {
     this.props.onMainPageLoaded();
     this.props.OnRetreiveUsersRequest();
+
+    this.setState({
+      allShownMessages: [],
+    });
+
+    const getRef = () => database.ref('Chats');
+    const getArrayFromObj = (obj) => Object.keys(obj).map((key) => obj[key]);
+    getRef().on('child_changed', (snapshot) => {
+      const arrayResultMessages = getArrayFromObj(snapshot.val());
+      const lastMsg = arrayResultMessages[arrayResultMessages.length - 1];
+      this.setState({
+        allShownMessages: [...this.state.allShownMessages, lastMsg],
+      });
+    });
   }
-  componentDidMount() {
-    // database
-    //   .ref(`/Chats/${this.props.chatId.chatId}`)
-    //   .once('child_added', (snap) => {
-    //     console.log('snap', snap.val());
-    //     console.log('chatId', this.props.chatId);
-    //   });
-    // console.log('this.props.chatId', JSON.stringify(this.props.chatId));
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.allMessage &&
+      this.props.allMessage !== nextProps.allMessage
+    ) {
+      this.setState({
+        allShownMessages: this.props.allMessage,
+      });
+    }
   }
 
   render() {
-    // console.log('chatid', this.props.chatId);
     const {
       user,
       allUsers,
@@ -50,9 +64,6 @@ export class MainPage extends React.Component {
       OnRequestGetUser,
       onRequestSendMessage,
       onRetreiveMessages,
-      allMessage,
-      messagesNotFound,
-      chatId,
     } = this.props;
     return (
       <div>
@@ -75,8 +86,7 @@ export class MainPage extends React.Component {
               currentUser={user}
               messageInputChange={OnMessageInputChange}
               sendMessageRequest={onRequestSendMessage}
-              messages={allMessage}
-              messagesNotFound={messagesNotFound}
+              messages={this.state.allShownMessages}
             />
           </div>
           <div style={flexSides}>
@@ -117,8 +127,6 @@ MainPage.propTypes = {
   onRequestSendMessage: PropTypes.func,
   onRetreiveMessages: PropTypes.func,
   allMessage: PropTypes.array,
-  messagesNotFound: PropTypes.array,
-  chatId: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -127,8 +135,6 @@ const mapStateToProps = createStructuredSelector({
   getUserInfo: makeSelectGetUser(),
   updateUserStatusInputChanged: makeSelectUserStatus(),
   allMessage: makeSelectAllMessages(),
-  messagesNotFound: makeSelectMessageNotFound(),
-  chatId: makeSelectChatId(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -160,16 +166,13 @@ function mapDispatchToProps(dispatch) {
         })
       ),
 
-    onRequestSendMessage: (selectedUserId) =>
-      dispatch(MainActions.requestSendMesage(selectedUserId)),
+    onRequestSendMessage: (selectedUserId, msg) =>
+      dispatch(MainActions.requestSendMesage(selectedUserId, msg)),
 
     onRetreiveMessages: (currentUserId, selectedUserId) =>
       dispatch(
         MainActions.requestRetreiveMessages(currentUserId, selectedUserId)
       ),
-
-    //   onMessageRecieved: (message) =>
-    //     dispatch(MainActions.messageRetreivedSuccuss(message)),
   };
 }
 

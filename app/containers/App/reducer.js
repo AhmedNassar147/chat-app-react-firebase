@@ -23,8 +23,7 @@ const initialState = fromJS({
   userData: {},
   usersFromDatabase: [],
   getUserinfo: {},
-  messageRetreivedSuccess: [],
-  messageRetreivedFailure: [],
+  messages: [],
 });
 function appReducer(state = initialState, action) {
   // const oldState = state.JS();
@@ -51,12 +50,12 @@ function appReducer(state = initialState, action) {
 
     case mainConstants.MESSAGE_RETREIVED_SUCCESS:
       return state.merge({
-        messageRetreivedSuccess: action.messages,
+        messages: action.messages,
       });
 
     case mainConstants.MESSAGE_RETREIVED_FAILURE:
       return state.merge({
-        messageRetreivedFailure: action.error,
+        messages: [],
       });
 
     default:

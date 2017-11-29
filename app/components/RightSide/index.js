@@ -34,20 +34,23 @@ class RightSide extends React.Component {
   getEveryUser = () => (
     <div>
       {this.props.data &&
-        this.props.data.map((user) => (
-          <UserComponent
-            key={user.id}
-            user={user}
-            startChat={this.props.startChat}
-            retreiveMessages={this.props.retreiveMessages}
-            currentUser={this.props.currentUser}
-          />
-        ))}
+        this.props.data.map(
+          (user) =>
+            user.id === this.props.currentUser.id ? null : (
+              <UserComponent
+                key={user.id}
+                user={user}
+                startChat={this.props.startChat}
+                retreiveMessages={this.props.retreiveMessages}
+                currentUser={this.props.currentUser}
+              />
+            )
+        )}
     </div>
   );
 
   render() {
-    const { data, currentUser } = this.props;
+    const { data } = this.props;
     if (!data || data.length < 1) {
       return <span>There is no users wait for loading..</span>;
     }

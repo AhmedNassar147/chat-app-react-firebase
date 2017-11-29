@@ -23,13 +23,12 @@ const makeSelectGetUser = () =>
   );
 
 const makeSelectAllMessages = () =>
-  createSelector(selectGlobal, (globalState) =>
-    globalState.get('messageRetreivedSuccess').toJS()
-  );
-
-const makeSelectMessageNotFound = () =>
-  createSelector(selectGlobal, (globalState) =>
-    globalState.get('messageRetreivedFailure').toJS()
+  createSelector(
+    selectGlobal,
+    (globalState) =>
+      globalState.get('messages')
+        ? globalState.get('messages').toJS()
+        : globalState.get('messages')
   );
 
 const makeSelectLoading = () =>
@@ -56,5 +55,4 @@ export {
   makeSelectAllUsers,
   makeSelectGetUser,
   makeSelectAllMessages,
-  makeSelectMessageNotFound,
 };

@@ -31,7 +31,7 @@ export function* signUpRequestSaga() {
       userStatus,
       id,
     };
-    console.log('DataForLocalStorge', DataForLocalStorge);
+    // console.log('DataForLocalStorge', DataForLocalStorge);
     yield put(signupActions.SignUpSuccess(DataForLocalStorge));
     const strigfiedData = JSON.stringify(DataForLocalStorge);
     // console.log('DataForLocalStorge2', strigfiedData);
@@ -43,7 +43,7 @@ export function* signUpRequestSaga() {
     });
     yield put(push('/mainPage'));
   } catch (error) {
-    console.log('Error while trying to add user to database', error);
+    // console.log('Error while trying to add user to database', error);
     // yield put(signupActions.SignupFailure(error));
   }
 }

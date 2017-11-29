@@ -35,29 +35,24 @@ MessagesItem.propTypes = {
   isCurrentUser: PropTypes.bool,
   text: PropTypes.any,
 };
-const MessageList = ({ messages, currentUserId, messagesNotFound }) => (
+const MessageList = ({ messages, currentUserId }) => (
   <div>
-    <div>
-      <List>
-        {messagesNotFound &&
-          messagesNotFound.map((msgNotFound) => (
-            <MessageNotFound
-              key={msgNotFound.msgId}
-              messageError={msgNotFound.error}
-            />
-          ))}
-      </List>
-    </div>
     <div style={{ height: '80%' }}>
       <List style={{ display: 'flex', flexDirection: 'column' }}>
-        {messages &&
+        {messages === [] || messages == null ? (
+          <MessageNotFound
+            key="error"
+            messageError="there is no messages between you"
+          />
+        ) : (
           messages.map((msg) => (
             <MessagesItem
               key={msg.date}
               isCurrentUser={msg.senderId === currentUserId}
               text={msg.message}
             />
-          ))}
+          ))
+        )}
       </List>
     </div>
   </div>
@@ -66,27 +61,34 @@ const MessageList = ({ messages, currentUserId, messagesNotFound }) => (
 MessageList.propTypes = {
   messages: PropTypes.array,
   currentUserId: PropTypes.any,
-  messagesNotFound: PropTypes.array,
 };
 
 // eslint-disable-next-line
 class MiddleSide extends React.Component {
-  onSendingMessage = () =>
-    this.props.sendMessageRequest(this.props.userInfo.id);
+  componentWillMount() {
+    this.setState({
+      inputValue: '',
+    });
+  }
+  onResetField = () => {
+    this.setState({
+      inputValue: '',
+    });
+  };
 
+  onSendingMessage = (sendMessageRequest, receiverUserId, messageValue) =>
+    sendMessageRequest(receiverUserId, messageValue);
   render() {
     const {
       userInfo,
+      currentUser,
+      sendMessageRequest,
       messageInputChange,
       messages,
-      currentUser,
-      messagesNotFound,
     } = this.props;
-
     return (
       <div>
         <Paper style={{ height: '100%' }}>
-          {/* header her */}
           <div style={{ backgroundColor: '#F3E5F5' }}>
             <List>
               <ListItem
@@ -96,29 +98,37 @@ class MiddleSide extends React.Component {
             </List>
           </div>
 
-          {/* messages show up her at the middle of the page*/}
-          <MessageList
-            messages={messages}
-            currentUserId={currentUser.id}
-            messagesNotFound={messagesNotFound}
-          />
+          <MessageList messages={messages} currentUserId={currentUser.id} />
 
-          {/* bottom her for type message and send it */}
           <div style={{ height: '10%', display: 'flex', margin: '0 20px' }}>
             <List style={{ flex: '7' }}>
               <TextField
                 fullWidth
                 hintText="type Message"
                 name="message"
-                onChange={messageInputChange}
+                value={this.state.inputValue}
+                onChange={(event) => {
+                  this.setState({
+                    inputValue: event.target.value,
+                  });
+                  return messageInputChange(event);
+                }}
               />
             </List>
+
             <List style={{ flex: '1' }}>
               <RaisedButton
                 fullWidth
                 secondary
                 label="SendMessage"
-                onClick={this.onSendingMessage}
+                onClick={() => {
+                  this.onSendingMessage(
+                    sendMessageRequest,
+                    userInfo.id,
+                    this.state.inputValue
+                  );
+                  this.onResetField();
+                }}
               />
             </List>
           </div>
@@ -134,7 +144,6 @@ MiddleSide.propTypes = {
   sendMessageRequest: PropTypes.func,
   messages: PropTypes.array,
   currentUser: PropTypes.object,
-  messagesNotFound: PropTypes.array,
 };
 
 export default MiddleSide;

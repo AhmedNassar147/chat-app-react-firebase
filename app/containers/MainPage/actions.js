@@ -1,4 +1,5 @@
 import Constants from './constants';
+import { constants } from 'os';
 
 export default {
   onMainPageLoaded: () => ({ type: Constants.MAIN_PAGE_LOADED }),
@@ -49,10 +50,7 @@ export default {
     type: Constants.USER_STATUS_DID_UPDATED,
     userStatus,
   }),
-  userStatusDidotUpdate: (error) => ({
-    type: Constants.USER_STATUS_DIDNOT_UPDATED,
-    error,
-  }),
+
   messageInputChaneged: ({ inputName, inputValue }) => ({
     type: Constants.INPUT_MESSAGE_CHANGED,
     inputName,
@@ -62,10 +60,6 @@ export default {
     type: Constants.REQUEST_SEND_MESSAGE,
     selectedUserId,
     msg,
-  }),
-  storeChatId: (chatId) => ({
-    type: Constants.STORE_CHAT_ID,
-    chatId,
   }),
   requestRetreiveMessages: (currentUserId, selectedUserId) => ({
     type: Constants.REQUEST_RETREIVE_MESSAGES,
@@ -77,8 +71,7 @@ export default {
     type: Constants.MESSAGE_RETREIVED_SUCCESS,
     messages,
   }),
-  messageRetreivedFailure: (error) => ({
+  messageRetreivedFailure: () => ({
     type: Constants.MESSAGE_RETREIVED_FAILURE,
-    error,
   }),
 };

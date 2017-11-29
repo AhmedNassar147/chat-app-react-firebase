@@ -4,9 +4,7 @@ import mainConstants, { DEFAULT_ACTION } from './constants';
 const initialState = fromJS({
   updateUserStatusInputChanged: {},
   userStatusUpdated: {},
-  userStatusCannotUpdate: {},
   messageinputvalueChanged: {},
-  chatId: {},
 });
 
 function mainPageReducer(state = initialState, action) {
@@ -23,19 +21,11 @@ function mainPageReducer(state = initialState, action) {
       return state.merge({
         userStatusUpdated: action.userStatus,
       });
-    case mainConstants.USER_STATUS_DIDNOT_UPDATED:
-      return state.merge({
-        userStatusCannotUpdate: action.error,
-      });
     case mainConstants.INPUT_MESSAGE_CHANGED:
       return state.merge({
         messageinputvalueChanged: {
           [action.inputName]: action.inputValue,
         },
-      });
-    case mainConstants.STORE_CHAT_ID:
-      return state.merge({
-        chatId: action.chatId,
       });
     default:
       return state;
